@@ -13,6 +13,10 @@ import { BoardProvider } from "./store/boardStore";
 import IsLoginRoute from "./route/IsLoginRoute";*/
 
 function App() {
+  // localStorage에 있는 계정(id)를 불러옴
+  const account = localStorage.getItem('idx');
+  console.log(account);
+
   return (
     <BrowserRouter>
       <BoardProvider>
