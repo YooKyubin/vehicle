@@ -187,12 +187,9 @@ function CarpoolInfo() {
         {/* personalInfo는 passengerList로 대체되었습니다 */}
         {passengerList.map((info) => {
           return (
-            // <InfoContainer>
-            <PassengerList key={info.id} passengerId={info.userId} userCase={userCase}/>
-            //   {info}
-            //   <br />
-            // 학과: 컴퓨터공학과
-            // {/* </InfoContainer> */}
+            <InfoContainer key={info.id}>
+              <PassengerList passengerId={info.userId} userCase={userCase}/>
+            </InfoContainer>
           );
         })}
       </PersonalInfo>
@@ -212,7 +209,7 @@ font-size: 25px;
 `;
 const InfoContainer = styled.div`
 width: 80%;
-height: 70px;
+
 background-color: white;
 margin-top: 15px;
 text-align: center;

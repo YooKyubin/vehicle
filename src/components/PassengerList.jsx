@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import styled from "styled-components";
 
 function PassengerList(props){
 
@@ -42,20 +43,43 @@ function PassengerList(props){
     }
 
     return <>
-        <h3>댓글</h3>
         {/* 신청 별 취소 권한 설정 해야함*/}
         {   // 게시글 작성자 이거나, 현재 로그인 아이디와 신청자 id가 같은 경우
             // => 게시글 작성자와 신청한 사람은 삭제 버튼이 보임
             isBoardWriter || userId === passengerId?
-            <button onClick={deleteApply}>삭제</button>:
+            <StyledButton onClick={deleteApply}>삭제</StyledButton>:
             null
         }
-        <h4>{passengerId}</h4>
-        <h4>id: {passengerInfo.id}</h4>
-        <h4>phoneNum: {passengerInfo["phoneNum"]}</h4>
-        <h4>name: {passengerInfo.name}</h4>
-        <h4>sex: {passengerInfo.sex}</h4>
+        <InfoContainer>
+            {passengerId}<br/>
+            id: {passengerInfo.id}<br/>
+            phoneNum: {passengerInfo["phoneNum"]}<br/>
+            name: {passengerInfo.name}<br/>
+            sex: {passengerInfo.sex}<br/>
+        </InfoContainer>
     </>
 }
 
 export default PassengerList;
+
+const BasicButton = styled.button`
+background-color: orange;
+color: white;
+border: 0;
+outline: 0;
+text-decoration: none;
+cursor: pointer;
+`;
+
+const StyledButton = styled(BasicButton)`
+width: ${(props) => props.width};
+height: ${(props) => props.height};
+font-size: 15px;
+float: right;
+margin: 3px;
+`;
+
+const InfoContainer = styled.div`
+margin-left: 15%;
+text-align: left;
+`;
