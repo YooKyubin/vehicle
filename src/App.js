@@ -8,6 +8,7 @@ import Carpool from "./pages/Carpool";
 import MyInfo from "./pages/MyInfo";
 import CarpoolInfo from "./pages/CarpoolInfo";
 import CarpoolPost from "./pages/CarpoolPost";
+import CarpoolUpdate from "./pages/CarpoolUpdate";
 import { BoardProvider } from "./store/boardStore";
 /*import NonMemberRoute from "./route/NonMemberRoute";
 import IsLoginRoute from "./route/IsLoginRoute";*/
@@ -27,6 +28,7 @@ function App() {
         <Route path="/forgetPw" element={<ForgetPw />} />
         <Route path="/carPool" element={<Carpool />} />
         <Route path="/carpool/post" element={<CarpoolPost />} />
+        <Route path="/carpool/update" element={<CarpoolUpdate />} />
         <Route path="/taxi" element={<Taxi />} />
         <Route path="/myInfo" element={<MyInfo />} />
         <Route path="/carpool/:id" element={<CarpoolInfo />} />

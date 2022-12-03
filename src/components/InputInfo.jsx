@@ -1,10 +1,10 @@
 import styled from "styled-components";
 
-function InputInfo({ placeholder = "", title, handleChange, rows }) {
+function InputInfo({ placeholder = "", title, handleChange, rows, defaultValue="" }) {
   return (
     <InputWrapper>
       <Title>{title}</Title>
-      <Input rows={rows} placeholder={placeholder} onChange={handleChange} />
+      <Input defaultValue={defaultValue }rows={rows} placeholder={placeholder} onChange={handleChange} />
     </InputWrapper>
   );
 }

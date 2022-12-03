@@ -108,28 +108,42 @@ function CarpoolInfo() {
 })
   }
 
-  // 게시글에 달린 모든 동승자 삭제
-  const delAllPassenger = (boardId) =>{
+  // 게시글에 달린 모든 동승자 삭제 후 게시글 삭제
+  const delBoard = () =>{
+    console.log(boardId);
+      // 동승자 삭제
       passengerList.forEach(passenger=>{
-          fetch(`http://localhost:3001/board/${boardId+passenger.userId}`, {method:"DELETE"})
+          fetch(`http://localhost:3001/passenger/${boardId+passenger.userId}`, {method:"DELETE"})
           .then(res=>{
               if(res.ok){
                   console.log("동승 신청 삭제 함");
+                  // 게시글 삭제
+                  fetch(`http://localhost:3001/board/${boardId}`, {method:"DELETE"})
+                  .then(res=>{
+                      if(res.ok){
+                          alert("게시글이 삭제되었습니다.")
+                          window.location.replace("/carpool");
+                      }
+                  })
               }
           })
       })
   }
 
   // 게시글 삭제 
-  const delBoard = (e) =>{
-      // 지금 여기서 삭제 해야할게 게시글 + 게시글에 달려있는 동승자 목록이라 어케 해야할 지 고민
-      fetch(`http://localhost:3001/board/${boardId}`, {method:"DELETE"})
-      .then(res=>{
-          if(res.ok){
-              alert("게시글이 삭제되었습니다.")
-              window.location.replace("/carpool");
-          }
-      })
+  // const delBoard = (e) =>{
+  //     // 지금 여기서 삭제 해야할게 게시글 + 게시글에 달려있는 동승자 목록이라 어케 해야할 지 고민
+  //     fetch(`http://localhost:3001/board/${boardId}`, {method:"DELETE"})
+  //     .then(res=>{
+  //         if(res.ok){
+  //             alert("게시글이 삭제되었습니다.")
+  //             window.location.replace("/carpool");
+  //         }
+  //     })
+  // }
+
+  const updateBoard = () =>{
+    nevigate('/carpool/update', {state: {currentData}});
   }
 
   return (
@@ -138,11 +152,8 @@ function CarpoolInfo() {
       <ContentWrapper>
         {userCase === 1 ? 
           <ButtonWrapper>
-            <BasicButton>수정</BasicButton>
-            <BasicButton onClick={()=>{
-              delAllPassenger(); // 모든 동승자 삭제
-              delBoard(); // 게시글 삭제
-              }}>삭제</BasicButton> 
+            <BasicButton onClick={updateBoard}>수정</BasicButton>
+            <BasicButton onClick={()=>{delBoard(boardId)}}>삭제</BasicButton> 
           </ButtonWrapper>:
           null
         }

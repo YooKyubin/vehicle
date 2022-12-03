@@ -51,6 +51,7 @@ function PassengerList(props){
             null
         }
         <InfoContainer>
+            {/* 이거 ul li 태그로 했어야 했는데! */}
             {passengerId}<br/>
             id: {passengerInfo.id}<br/>
             phoneNum: {passengerInfo["phoneNum"]}<br/>
