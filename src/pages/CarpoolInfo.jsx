@@ -4,7 +4,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import PassengerList from "../components/PassengerList";
 import styled from "styled-components";
 import NavBar from "../components/navBar/navBar";
-import { useBoardData } from "../store/boardStore";
+// import { useBoardData } from "../store/boardStore";
 
 function CarpoolInfo() {
 
@@ -16,6 +16,13 @@ function CarpoolInfo() {
   const [currentData, setCurrentData] = useState([]);
   // 동승자 목록
   const [passengerList, setPassengerList] = useState([]);
+  // 게시글 작성자 회원 정보
+  const [writerData, setWriterData] = useState({
+    id: "init id",
+    name: "init Name",
+    sex: "init sec",
+    phoneNum: "init phoneNum"
+    });
 
   // 게시글 권한 정보(접속한 사람id)
   // const userId = localStorage.getItem['idx'];
@@ -35,6 +42,16 @@ function CarpoolInfo() {
       })
       .then(data=>{
           setCurrentData(data[0]);
+
+          // 게시글 작성자 회원 정보 받아오기
+          fetch(`http://localhost:3001/account?id=${data[0].writer}`)
+          .then(late=>{
+            console.log("res:",late);
+            return late.json();
+          })
+          .then(data=>{
+            setWriterData(data[0]);
+          })
       })
 
       // 게시글 동승자 목록 받아오기
@@ -48,11 +65,12 @@ function CarpoolInfo() {
       })
 
   },[boardId])
+
   
   // userCase 접속 id에 따라 다른 컴포넌트를 보여주기 위함
   // 1 은 작성자, 2: 댓글 작성자(동승 신청자), 3: 외부인(아직 게시글과 관련 없는 사람)
   let userCase;
-  if(userId === info.writer){
+  if(userId === currentData.writer){
       userCase = 1;
   // 동승자 리스트를 검사해서 현재 userId가 들어 있는지 검사
   }else if(passengerList.map(passenger=>passenger.userId).includes(userId)){
@@ -118,49 +136,63 @@ function CarpoolInfo() {
     <CarpoolInfoWrapper>
       <NavBar />
       <ContentWrapper>
-        <ButtonWrapper>
-          <BasicButton>수정</BasicButton>
-          <BasicButton onClick={()=>{
-            delAllPassenger(); // 모든 동승자 삭제
-            delBoard(); // 게시글 삭제
-            }}>삭제</BasicButton>
-        </ButtonWrapper>
+        {userCase === 1 ? 
+          <ButtonWrapper>
+            <BasicButton>수정</BasicButton>
+            <BasicButton onClick={()=>{
+              delAllPassenger(); // 모든 동승자 삭제
+              delBoard(); // 게시글 삭제
+              }}>삭제</BasicButton> 
+          </ButtonWrapper>:
+          null
+        }
         <StyledContent width={"100%"}>{currentData.title}</StyledContent>
         <LocateInfo>
-          <BasicContent>{currentData.district}</BasicContent>
-          <BasicContent>{currentData.region}</BasicContent>
-          <BasicContent>{currentData.departures}</BasicContent>
+          <BasicContent>{currentData.startProvince}</BasicContent>
+          <BasicContent>{currentData.startCity}</BasicContent>
+          <BasicContent>{currentData.startDetail}</BasicContent>
         </LocateInfo>
         <LocateInfo>
-          <BasicContent>{currentData.arrivalsDst}</BasicContent>
-          <BasicContent>{currentData.arrivalsRegion}</BasicContent>
-          <BasicContent>{currentData.arrivals}</BasicContent>
+          <BasicContent>{currentData.arrivalProvince}</BasicContent>
+          <BasicContent>{currentData.arrivalCity}</BasicContent>
+          <BasicContent>{currentData.arrivalDetail}</BasicContent>
         </LocateInfo>
-        <DepartureTime>{currentData.departureTime}</DepartureTime>
+        <DepartureTime>{currentData.date}{"\n"}{currentData.time}</DepartureTime>
         <WriterInfo>
           <div>
-            <Img src={`/assets/images/${currentData.type}.png`} />
-            <StyledContent width={"100%"}>{currentData.carType}</StyledContent>
+            <Img src={`/assets/images/${currentData.driver}.png`} />
+            <StyledContent width={"100%"}>{currentData.car}</StyledContent>
           </div>
-          <StyledContent width={"70%"}>DB에 저장한 유저 정보</StyledContent>
+          <StyledContent width={"70%"}>
+            {writerData.name}<br/>
+            {writerData.sex}<br/>
+            {writerData.phoneNum}<br/>
+            {writerData.id}<br/>
+          </StyledContent>
         </WriterInfo>
         <StyledContent width={"100%"} height={"50px"}>
           {currentData.content}
         </StyledContent>
-        <StyledButton width={"100%"} height={"30px"}>
+        {userCase === 3 ?
+        <StyledButton width={"100%"} height={"30px"} onClick={addPassenger} disabled={
+          passengerList.length < 3 ? "" : "disable" // 3은 임의의 숫자, info.maxPassenger
+        }>
           {currentData.type === "driver" ? "동승하기" : "픽업하기"}
-        </StyledButton>
+        </StyledButton> :
+        null
+        }
       </ContentWrapper>
       <Splitter />
       <PersonalInfo>
         {/* personalInfo는 passengerList로 대체되었습니다 */}
         {passengerList.map((info) => {
           return (
-            <InfoContainer>
-              {info}
-              <br />
-              학과: 컴퓨터공학과
-            </InfoContainer>
+            // <InfoContainer>
+            <PassengerList key={info.id} passengerId={info.userId} userCase={userCase}/>
+            //   {info}
+            //   <br />
+            // 학과: 컴퓨터공학과
+            // {/* </InfoContainer> */}
           );
         })}
       </PersonalInfo>

@@ -1,9 +1,7 @@
-import React from 'react'
+import React from "react";
 
-function Taxi() {
-  return (
-    <div>Taxi</div>
-  )
+function Taxi(){
+    return <h1>택시 페이지</h1>
 }
 
 export default Taxi

@@ -1,75 +1,102 @@
 import React, { useEffect, useState } from "react";
 import Thumbnail from "../components/Thumbnail";
-import Search from "../components/Search";
 import styled from "styled-components";
-import {Link} from "react-router-dom";
+import { Link } from "react-router-dom";
+import NavBar from "../components/navBar/navBar";
+import SearchBar from "../components/SearchBar";
+import { useBoardData } from "../store/boardStore";
 
-function Carpool(){
+function Carpool() {
+  const [toSearch, setToSearch] = useState([]);
+  const [url, setUrl] = useState("http://localhost:3000/board");
+  const { selectedOption, boards, setSelectedOption } = useBoardData();
+  const [currentBoards, setCurrentBoards] = useState(boards);
 
-    const [boards, setBoards] = useState([]);
-    const [toSearch, setToSearch] = useState([]);
-    const [url, setUrl] = useState("http://localhost:3001/board");
-    
-    //Search 컴포넌트로 넘겨줄 콜백함수?
-    const getURL = (loadUrl) => {
-        setUrl(loadUrl);
-    };
+  //Search 컴포넌트로 넘겨줄 콜백함수?
+  const getURL = (loadUrl) => {
+    setUrl(loadUrl);
+  };
+  const onClickSearch = () => {
+    const filteredBoard = boards.filter(
+      (boardInfo) =>
+        boardInfo.district === selectedOption.district && boardInfo.region === selectedOption.region
+    );
+    setCurrentBoards(filteredBoard);
+  };
+  const onClickLogo = () => {
+    setCurrentBoards(boards);
+  };
+  useEffect(() => {
+  //api
+//   fetch("http://localhost:3001/board")
+// 		.then(res=>{
+// 			return res.json();
+// 		})
+// 		.then(data=>{
+// 			setCurrentBoards(data);
+// 		})
+  }, []);
 
-    useEffect(()=>{
-        // 페이지 처음 렌더링 할때 게시글 목록 불러오기(썸네일 보여주기 위해)
-        fetch(url)
-		.then(res=>{
-			return res.json();
-		})
-		.then(data=>{
-			setBoards(data);
-		})
-    },[url])
-        
-    useEffect(()=>{
-        // 전체 게시글 정보를 검색 컴포넌트로 넘기기 위해
-        // select 문을 변결할 때마다 검색 select에 나오는 옵션을 알맞게 변경시켜주기 위해선 이부분 수정이 필요함
-        fetch("http://localhost:3001/board")
-        .then(res=>{
-            return res.json();
-        })
-        .then(data=>{
-            setToSearch(data);
-        })
-    },[])
-    
-    //검색 주소를 콘솔에 출력
-    console.log(toSearch);
+  //검색 주소를 콘솔에 출력
+  // console.log(toSearch);
 
-    return <>
-        <h1>카풀 페이지</h1>
-        <Posting>
-            <Link to="/carpool/post">글쓰기</Link>
-        </Posting>
-        <SearchWrapper>
-            <Search keywords={toSearch} parentFunction={getURL}></Search>
-        </SearchWrapper>
-        <BoardLsit>
-            {boards.map(board=>(
-                (<Thumbnail key={board.id} info={board} />)
-            ))}
-        </BoardLsit>
-    </>;
+  return (
+    <CarpoolWrapper>
+      <NavBar />
+      <MainTitle onClick={onClickLogo}>카풀 게시판</MainTitle>
+      <InnerNavBarWrapper>
+        <SearchBar />
+        <SearchIcon onClick={onClickSearch} src="./assets/images/searchIcon.png" />
+        <StyledLink to="/carpool/post">글쓰기</StyledLink>
+      </InnerNavBarWrapper>
+      <BoardWrapper>
+        {currentBoards.map((board) => (
+          <Thumbnail key={board.id} boardInfo={board} />
+        ))}
+      </BoardWrapper>
+    </CarpoolWrapper>
+  );
 }
+const SearchIcon = styled.img`
+  width: 20px;
+  background-color: white;
+`;
+const BoardWrapper = styled.ul`
+  list-style: none;
+  padding-left: 0px;
+  height: 67vh; 
+  display: flex;
+  flex-direction: column;
+  background-color: white;
+  width: 92vw; 
+  margin: 10px auto;
+  overflow: scroll;
+`;
+const StyledLink = styled(Link)`
+  color: white;
+  text-decoration: none;
+  background-color: orange;
+  padding: 0px 7px;
+  border-radius: 3px;
+`;
 
-const SearchWrapper = styled.div`
-    padding: 40px;
-`
+const InnerNavBarWrapper = styled.div`
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  margin: auto;
+`;
+const MainTitle = styled.p`
+  font-size: 23px;
+  color: white;
+  font-weight: 900;
+  margin-left: 7px;
+`;
 
-const Posting = styled.div`
-    float: right;
-    display: block
-    margin: 10px;
-    width: 50px;
-`
-
-const BoardLsit = styled.ul`
-    list-style: none;
-`
+const CarpoolWrapper = styled.div`
+  height: 100vh;
+  width: 100vw;
+  background-color: rgb(54, 58, 179);
+`;
 
 export default Carpool;
