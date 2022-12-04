@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import styled from "styled-components";
 
-function PassengerList(props){
+function TaxiPassengerList(props){
 
     const passengerId = props.passengerId; // 동승신청자, 댓글 주인 id
     const isBoardWriter = props.userCase === 1; // userCase가 게시글 작성자인 경우 true 저장
@@ -13,8 +13,8 @@ function PassengerList(props){
     // const userId = localStorage.getItem['idx'];
 
     /* 개발할 때 CarpoolInfo와 같은 userId인지 확인하면서 개발할 것 */
-    const userId = '2018250033'; // 임시 사용 // 게시글 작성자 역할
-    // const userId = '2018250233'; // 임시 사용 // 외부인 역할 - 동승신청 클릭
+    // const userId = '2018250033'; // 임시 사용 // 게시글 작성자 역할
+    const userId = '2018250233'; // 임시 사용 // 외부인 역할 - 동승신청 클릭
     // const userId = '2022330044'; // 임시 사용 // 동승자 역할
 
 
@@ -33,7 +33,7 @@ function PassengerList(props){
     const deleteApply = (e)=>{
         e.preventDefault();
         // 동승 신청 삭제 요청
-        fetch(`http://localhost:3001/passenger/${boardId+passengerId}`, {method:"DELETE"})
+        fetch(`http://localhost:3001/taxipassenger/${boardId+passengerId}`, {method:"DELETE"})
         .then(res=>{
             if(res.ok){
                 alert("신청이 취소되었습니다.")
@@ -46,9 +46,9 @@ function PassengerList(props){
         {/* 신청 별 취소 권한 설정 해야함*/}
         {   // 게시글 작성자 이거나, 현재 로그인 아이디와 신청자 id가 같은 경우
             // => 게시글 작성자와 신청한 사람은 삭제 버튼이 보임
-            isBoardWriter || userId === passengerId?
-            <StyledButton onClick={deleteApply}>삭제</StyledButton>:
-            null
+            (isBoardWriter || (userId === passengerId))
+            ? <StyledButton onClick={deleteApply}>삭제</StyledButton>
+            : null
         }
         <InfoContainer>
             {/* 이거 ul li 태그로 했어야 했는데! */}
@@ -61,7 +61,7 @@ function PassengerList(props){
     </>
 }
 
-export default PassengerList;
+export default TaxiPassengerList;
 
 const BasicButton = styled.button`
 background-color: orange;

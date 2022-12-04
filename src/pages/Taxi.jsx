@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import Thumbnail from "../components/Thumbnail";
+import TaxiThumbnail from "../components/TaxiThumbnail";
 import styled from "styled-components";
 import { Link } from "react-router-dom";
 import NavBar from "../components/navBar/navBar";
@@ -28,7 +28,7 @@ function Taxi(){
   };
   useEffect(() => {
   //api
-//   fetch("http://localhost:3001/board")
+//   fetch("http://localhost:3001/taxiboard")
 // 		.then(res=>{
 // 			return res.json();
 // 		})
@@ -47,11 +47,11 @@ function Taxi(){
       <InnerNavBarWrapper>
         <SearchBar />
         <SearchIcon onClick={onClickSearch} src="./assets/images/searchIcon.png" />
-        <StyledLink to="/carpool/post">글쓰기</StyledLink>
+        <StyledLink to="/taxi/post">글쓰기</StyledLink>
       </InnerNavBarWrapper>
       <BoardWrapper>
         {currentBoards.map((board) => (
-          <Thumbnail key={board.id} boardInfo={board} />
+          <TaxiThumbnail key={board.id} boardInfo={board} />
         ))}
       </BoardWrapper>
     </CarpoolWrapper>

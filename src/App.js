@@ -9,6 +9,8 @@ import MyInfo from "./pages/MyInfo";
 import CarpoolInfo from "./pages/CarpoolInfo";
 import CarpoolPost from "./pages/CarpoolPost";
 import CarpoolUpdate from "./pages/CarpoolUpdate";
+import TaxiPost from './pages/TaxiPost';
+import TaxiInfo from './pages/TaxiInfo';
 import { BoardProvider } from "./store/boardStore";
 /*import NonMemberRoute from "./route/NonMemberRoute";
 import IsLoginRoute from "./route/IsLoginRoute";*/
@@ -30,8 +32,11 @@ function App() {
         <Route path="/carpool/post" element={<CarpoolPost />} />
         <Route path="/carpool/update" element={<CarpoolUpdate />} />
         <Route path="/taxi" element={<Taxi />} />
+        <Route path="/taxi/post" element={<TaxiPost/>} />
+        <Route path="/taxi/update" element={<Taxi />} />
         <Route path="/myInfo" element={<MyInfo />} />
         <Route path="/carpool/:id" element={<CarpoolInfo />} />
+        <Route path="/taxi/:id" element={<TaxiInfo />} />
       </Routes>
       </BoardProvider>
     </BrowserRouter>
