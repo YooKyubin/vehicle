@@ -20,14 +20,13 @@ function CarpoolPost() {
     currentPassengers: 0,
   });
   const navigate = useNavigate();
-  const location = useLocation();
 
+  const location = useLocation();
   const boardData = location.state.currentData;
   console.log("inputData:", boardData);
-  // 이 코드를 잘 이해 못하겟어요..
-  // 이해하고 나면 location 으로 가져온 정보를 디폴트 value로 하는 update 페이지를 만든다
 
   const { selectedOption, boards, setBoards } = useBoardData();
+
   const onChangeValue = (e, type) => {
     if (type === "departureTime") {
       let time = e.target.value;
@@ -43,6 +42,7 @@ function CarpoolPost() {
       });
     }
   };
+
   const onClickType = (e) => {
     if (e.target.checked) {
       setValues((prev) => {
@@ -50,6 +50,29 @@ function CarpoolPost() {
       });
     }
   };
+  
+  const [provinces,setProvinces] = useState([]);
+  const [citys,setCitys] = useState([]);
+  useEffect(()=>{
+    // 우리나라 지역 정보 받아오기
+    fetch("http://localhost:3001/Province")
+    .then(res=>{
+        return res.json();
+    })
+    .then(data=>{
+      setProvinces(data);
+      console.log("fetch",data);
+    })
+
+    fetch("http://localhost:3001/City")
+    .then(res=>{
+        return res.json();
+    })
+    .then(data=>{
+      setCitys(data);
+    })
+  }, [])
+
   useEffect(() => {
     const valueNames = [
       "title",
@@ -68,6 +91,7 @@ function CarpoolPost() {
     });
     setIsFill(isValidate);
   }, [values]);
+
   const handleSubmit = (event) => {
     navigate(`/carpool/${boardData.id}`);
     const currentOption = { ...selectedOption, ...values };
@@ -81,21 +105,63 @@ function CarpoolPost() {
 
     event.preventDefault();
   };
+
   return (
     <CarpoolPostWrapper>
       <NavBar />
       <ContentWrapper>
         <InputInfo title="제목" rows={1} handleChange={(e) => onChangeValue(e, "title")} defaultValue={boardData.title}/>
-        <StyledLabel>출발지</StyledLabel>
-        <BoxWrapper>
-          <SelectBox type="departure" label="출발지" defaultValue={boardData.startProvince}/>
+          <StyledLabel>출발지:</StyledLabel>
+          <select name="districts">
+            <option value={boardData.startProvince} selected>
+              {boardData.startProvince}
+            </option>
+            {provinces.map((province) => {
+              if(! (boardData.startProvince === province.name)){
+                return <option value={province.name}>{province.name}</option>;
+              }
+            })}
+          </select>
+
+          <select name="regions">
+            <option value={boardData.startCity} selected>
+              {boardData.startCity}
+            </option>
+            {citys.map(city => {
+              if(selectedOption.district === city.province_name){ // 선택된 Province와 같은 city 찾기
+                if(! (boardData.startCity === city.name)){ // 중복 제거
+                  return <option value={city.name}>{city.name}</option>;
+                }
+              }
+            })}
+          </select>
           <DetailAddress onChange={(e) => onChangeValue(e, "departures")} defaultValue={boardData.startDetail} />
-        </BoxWrapper>
-        <StyledLabel>목적지</StyledLabel>
-        <BoxWrapper>
-          <SelectBox type="arrivals" label="목적지" />
+
+          <StyledLabel>목적지:</StyledLabel>
+          <select name="arrivalDistricts">
+            <option value={boardData.arrivalProvince} selected>
+              {boardData.arrivalProvince}
+            </option>
+            {provinces.map((province) => {
+              if(! (boardData.arrivalProvince === province.name)){
+                return <option value={province.name}>{province.name}</option>;
+              }
+            })}
+          </select>
+
+          <select name="arrivalRegions">
+            <option value={boardData.arrivalCity} selected>
+              {boardData.arrivalCity}
+            </option>
+            {citys.map(city => {
+              if(selectedOption.arrivalDistrict === city.province_name){
+                if(! (boardData.arrivalCity === city.name)){
+                  return <option value={city.name}>{city.name}</option>;
+                }
+              }
+            })}
+          </select>
           <DetailAddress onChange={(e) => onChangeValue(e, "arrivals")} defaultValue={boardData.arrivalDetail} />
-        </BoxWrapper>
         <StyledLabel>날짜 및 시간</StyledLabel>
         <Date onChange={(e) => onChangeValue(e, "departureTime")} type="datetime-local" />
         <TypeContainer>
@@ -127,7 +193,7 @@ function CarpoolPost() {
         </CarInfo>
         <InputInfo handleChange={(e) => onChangeValue(e, "content")} title="내용" rows={7} defaultValue={boardData.content}/>
         <SubmitBtn disabled={!isFill} onClick={handleSubmit} value={isFill}>
-          작성 하기
+          수정 하기
         </SubmitBtn>
       </ContentWrapper>
     </CarpoolPostWrapper>

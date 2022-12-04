@@ -57,6 +57,7 @@ function PassengerList(props){
             phoneNum: {passengerInfo["phoneNum"]}<br/>
             name: {passengerInfo.name}<br/>
             sex: {passengerInfo.sex}<br/>
+            major: {passengerInfo.major}<br/>
         </InfoContainer>
     </>
 }

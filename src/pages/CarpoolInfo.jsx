@@ -179,6 +179,7 @@ function CarpoolInfo() {
             {writerData.sex}<br/>
             {writerData.phoneNum}<br/>
             {writerData.id}<br/>
+            {writerData.major}<br/>
           </StyledContent>
         </WriterInfo>
         <StyledContent width={"100%"} height={"50px"}>
@@ -186,7 +187,7 @@ function CarpoolInfo() {
         </StyledContent>
         {userCase === 3 ?
         <StyledButton width={"100%"} height={"30px"} onClick={addPassenger} disabled={
-          passengerList.length < 3 ? "" : "disable" // 3은 임의의 숫자, info.maxPassenger
+          passengerList.length < currentData.maxPassenger ? "" : "disable"
         }>
           {currentData.type === "driver" ? "동승하기" : "픽업하기"}
         </StyledButton> :
