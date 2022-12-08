@@ -3,22 +3,23 @@ import styled from "styled-components";
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
-function TaxiThumbnail({ boardInfo }) {
+function TaxiThumbnail(props) {
+  const boardInfo = props.boardInfo;
+  const passengerList = props.passengerList;
   return (
     <StyledLink to={`/taxi/${boardInfo.id}`}>
       <ThumbnailWrapper>
-        <ThumbnailImage src={"./assets/images/taxi.png"} /> {/*이거 사진이 없어요*/}
+        <ThumbnailImage src={"./assets/images/taxi.png"} />
         <ContentWrapper to={`/taxi/${boardInfo.id}`}>
           <div>{boardInfo.title}</div>
-          <div>출발지: {boardInfo.departures}</div>
-          <div>목적지: {boardInfo.arrivals}</div>
-          <div>출발 시간 {boardInfo.departureTime}</div>
-          <div>{boardInfo.time}</div>
+          <div>출발지: {boardInfo.startDetail}</div>
+          <div>목적지: {boardInfo.arrivalDetail}</div>
+          <div>출발 시간 {boardInfo.time}</div>
         </ContentWrapper>
         <PickUpInfo>
           <div>탑승 인원</div>
           <div>
-              {boardInfo.totalPassengers}명
+              {passengerList.length}명
           </div>
         </PickUpInfo>
       </ThumbnailWrapper>

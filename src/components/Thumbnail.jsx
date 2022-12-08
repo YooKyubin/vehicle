@@ -3,24 +3,31 @@ import styled from "styled-components";
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
-function Thumbnail({ boardInfo }) {
+function Thumbnail(props) {
+  // console.log("passengerList", passengerList.map(i=>i.id));
+  // const passengerCount = passengerList.filter(data => {
+  //   return data.boardId === boardInfo.id
+  // }).length;
+  const boardInfo = props.boardInfo;
+  const passengerList = props.passengerList;
+
   return (
-    <StyledLink to={`/carpool/${boardInfo.boardId}`}>
+    <StyledLink to={`/carpool/${boardInfo.id}`}>
       <ThumbnailWrapper>
-        <ThumbnailImage type={boardInfo.type} src={`./assets/images/${boardInfo.type}.png`} />
-        <ContentWrapper to={`/carpool/${boardInfo.boardId}`}>
+        <ThumbnailImage type={boardInfo.driver} src={`./assets/images/${boardInfo.driver}.png`} />
+        <ContentWrapper to={`/carpool/${boardInfo.id}`}>
           <div>{boardInfo.title}</div>
-          <div>출발지: {boardInfo.departures}</div>
-          <div>목적지: {boardInfo.arrivals}</div>
-          <div>출발 시간 {boardInfo.departureTime}</div>
-          <div>{boardInfo.time}</div>
+          <div>출발지: {boardInfo.startDetail}</div>
+          <div>목적지: {boardInfo.arrivalDetail}</div>
+          <div>출발 시간 {boardInfo.time}</div>
+
         </ContentWrapper>
         <PickUpInfo>
           <div>{boardInfo.type === "driver" ? "탑승인원" : "픽업하기"}</div>
           <div>
-            {boardInfo.type === "driver"
-              ? `${boardInfo.currentPassengers}/${boardInfo.totalPassengers}`
-              : `${boardInfo.totalPassengers}명`}
+            {boardInfo.driver === "driver"
+              ? <div> {passengerList.length} / {boardInfo.maxPassenger}</div>
+              : <div>{boardInfo.maxPassenger}명</div>}
           </div>
         </PickUpInfo>
       </ThumbnailWrapper>

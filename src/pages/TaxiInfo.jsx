@@ -25,18 +25,19 @@ function CarpoolInfo() {
     });
 
   // 게시글 권한 정보(접속한 사람id)
-  // const userId = localStorage.getItem['idx'];
+  const userId = localStorage.getItem['currentUserId'];
 
   /* 개발할 때 PassengerList와 같은 userId인지 확인하면서 개발할 것 */
 //   const userId = '2018250033'; // 임시 사용 // 게시글 작성자 역할
-  const userId = '2018250233'; // 임시 사용 // 외부인 역할 - 동승신청 클릭
+  // const userId = '2018250233'; // 임시 사용 // 외부인 역할 - 동승신청 클릭
 //   const userId = '2022330044'; // 임시 사용 // 동승자 역할
 
   const nevigate = useNavigate();
 
   useEffect(()=>{        
       // 게시글 정보 받아오기
-      fetch(`http://localhost:3001/taxiboard?id=${boardId}`)
+      // fetch(`http://localhost:3001/taxiboard?id=${boardId}`)
+      fetch(`http://localhost:5000/api/taxiboard?id=${boardId}`)
       .then(res=>{
           return res.json();
       })
@@ -44,7 +45,8 @@ function CarpoolInfo() {
           setCurrentData(data[0]);
 
           // 게시글 작성자 회원 정보 받아오기
-          fetch(`http://localhost:3001/account?id=${data[0].writer}`)
+          // fetch(`http://localhost:3001/account?id=${data[0].writer}`)
+          fetch(`http://localhost:5000/api/login?id=${data[0].writer}`)
           .then(late=>{
             console.log("res:",late);
             return late.json();
@@ -55,7 +57,8 @@ function CarpoolInfo() {
       })
 
       // 게시글 동승자 목록 받아오기
-      fetch(`http://localhost:3001/taxipassenger?boardId=${boardId}`)
+      // fetch(`http://localhost:3001/taxipassenger?boardId=${boardId}`)
+      fetch(`http://localhost:5000/api/taxipassenger?boardId=${boardId}`)
       .then(res=>{
           return res.json();
       })
@@ -90,7 +93,8 @@ function CarpoolInfo() {
           "userId": userId
   }
 
-      fetch(`http://localhost:3001/taxipassenger`,{
+      // fetch(`http://localhost:3001/taxipassenger`,{
+      fetch(`http://localhost:5000/api/taxipassenger`,{
   method: 'POST',
   headers: {
     "Content-Type" : "application/json"
@@ -113,12 +117,14 @@ function CarpoolInfo() {
     console.log(boardId);
       // 동승자 삭제
       passengerList.forEach(passenger=>{
-          fetch(`http://localhost:3001/taxipassenger/${boardId+passenger.userId}`, {method:"DELETE"})
+          // fetch(`http://localhost:3001/taxipassenger/${boardId+passenger.userId}`, {method:"DELETE"})
+          fetch(`http://localhost:5000/api/taxipassenger/${boardId+passenger.userId}`, {method:"DELETE"})
           .then(res=>{
               if(res.ok){
                   console.log("동승 신청 삭제 함");
                   // 게시글 삭제
-                  fetch(`http://localhost:3001/taxiboard/${boardId}`, {method:"DELETE"})
+                  // fetch(`http://localhost:3001/taxiboard/${boardId}`, {method:"DELETE"})
+                  fetch(`http://localhost:5000/api/taxiboard/${boardId}`, {method:"DELETE"})
                   .then(res=>{
                       if(res.ok){
                           alert("게시글이 삭제되었습니다.")
@@ -129,18 +135,6 @@ function CarpoolInfo() {
           })
       })
   }
-
-  // 게시글 삭제 
-  // const delBoard = (e) =>{
-  //     // 지금 여기서 삭제 해야할게 게시글 + 게시글에 달려있는 동승자 목록이라 어케 해야할 지 고민
-  //     fetch(`http://localhost:3001/board/${boardId}`, {method:"DELETE"})
-  //     .then(res=>{
-  //         if(res.ok){
-  //             alert("게시글이 삭제되었습니다.")
-  //             window.location.replace("/carpool");
-  //         }
-  //     })
-  // }
 
   const updateBoard = () =>{
     nevigate('/taxi/update', {state: {currentData}});

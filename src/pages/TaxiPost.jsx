@@ -59,7 +59,7 @@ function TaxiPost() {
     });
     setIsFill(isValidate);
   }, [values]);
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     // 여기부분은 post 요청을 넣으면 될 거같은데 뭔지 몰라서 따로 건들이지 않을게요
     navigate("/taxi");
     const currentOption = { ...selectedOption, ...values };
@@ -67,9 +67,18 @@ function TaxiPost() {
       id: boards.length,
       ...currentOption,
     };
-    setBoards((prev) => {
-      return prev.concat(newBoard);
+
+    const fetchApi = await fetch("http://localhost:5000/api/taxi", {
+      method: "POST",
+      body: JSON.stringify({
+        ...newBoard,
+      }),
     });
+    fetchApi
+      .then((res) => {
+        return res.json();
+      })
+      .then((data) => console.log(data));
 
     event.preventDefault();
   };

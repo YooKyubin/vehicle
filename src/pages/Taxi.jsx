@@ -9,8 +9,9 @@ import { useBoardDataTaxi } from "../store/boardStoreTaxi";
 function Taxi(){
   const [toSearch, setToSearch] = useState([]);
   const [url, setUrl] = useState("http://localhost:3000/taxi");
-  const { selectedOption, boards, setSelectedOption } = useBoardDataTaxi();
+  const { selectedOption, boards, setBoards } = useBoardDataTaxi();
   const [currentBoards, setCurrentBoards] = useState(boards);
+  const [passengerList, setPassengerList] = useState([]);
 
   //Search 컴포넌트로 넘겨줄 콜백함수?
   const getURL = (loadUrl) => {
@@ -19,22 +20,37 @@ function Taxi(){
   const onClickSearch = () => {
     const filteredBoard = boards.filter(
       (boardInfo) =>
-        boardInfo.district === selectedOption.district && boardInfo.region === selectedOption.region
+        boardInfo.startProvince === selectedOption.district && boardInfo.startCity === selectedOption.region
     );
     setCurrentBoards(filteredBoard);
   };
   const onClickLogo = () => {
     setCurrentBoards(boards);
   };
+ 
   useEffect(() => {
-  //api
-//   fetch("http://localhost:3001/taxiboard")
-// 		.then(res=>{
-// 			return res.json();
-// 		})
-// 		.then(data=>{
-// 			setCurrentBoards(data);
-// 		})
+    // fetch("http://localhost:5000/api/taxiboard")
+    fetch("http://localhost:3001/taxiboard")
+      .then((res) => {
+        return res.json();
+      })
+      .then((data) => {
+        setCurrentBoards(data);
+        setBoards(data);
+      });
+  // }, [currentBoards, boards]);
+
+    // 게시글 동승자 목록 받아오기
+    fetch('http://localhost:3001/taxipassenger')
+    // fetch('http://localhost:5000/api/taxipassenger')
+    .then(res=>{
+        return res.json();
+    })
+    .then(data=>{
+        setPassengerList(data);
+        console.log("ghk",data.map(a=>a.userId));
+    })
+
   }, []);
 
   //검색 주소를 콘솔에 출력
@@ -51,7 +67,11 @@ function Taxi(){
       </InnerNavBarWrapper>
       <BoardWrapper>
         {currentBoards.map((board) => (
-          <TaxiThumbnail key={board.id} boardInfo={board} />
+          <TaxiThumbnail key={board.id} boardInfo={board} 
+          passengerList={passengerList.filter(i =>{
+            return i.boardId === board.id;
+          })}
+          />
         ))}
       </BoardWrapper>
     </CarpoolWrapper>

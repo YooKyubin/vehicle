@@ -51,27 +51,27 @@ function CarpoolPost() {
     }
   };
   
-  const [provinces,setProvinces] = useState([]);
-  const [citys,setCitys] = useState([]);
-  useEffect(()=>{
-    // 우리나라 지역 정보 받아오기
-    fetch("http://localhost:3001/Province")
-    .then(res=>{
-        return res.json();
-    })
-    .then(data=>{
-      setProvinces(data);
-      console.log("fetch",data);
-    })
+  // const [provinces,setProvinces] = useState([]);
+  // const [citys,setCitys] = useState([]);
+  // useEffect(()=>{
+  //   // 우리나라 지역 정보 받아오기
+  //   fetch("http://localhost:3001/Province")
+  //   .then(res=>{
+  //       return res.json();
+  //   })
+  //   .then(data=>{
+  //     setProvinces(data);
+  //     console.log("fetch",data);
+  //   })
 
-    fetch("http://localhost:3001/City")
-    .then(res=>{
-        return res.json();
-    })
-    .then(data=>{
-      setCitys(data);
-    })
-  }, [])
+  //   fetch("http://localhost:3001/City")
+  //   .then(res=>{
+  //       return res.json();
+  //   })
+  //   .then(data=>{
+  //     setCitys(data);
+  //   })
+  // }, [])
 
   useEffect(() => {
     const valueNames = [
@@ -92,16 +92,27 @@ function CarpoolPost() {
     setIsFill(isValidate);
   }, [values]);
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     navigate(`/carpool/${boardData.id}`);
     const currentOption = { ...selectedOption, ...values };
     const newBoard = {
       id: boards.length,
       ...currentOption,
     };
-    setBoards((prev) => {
-      return prev.concat(newBoard);
+    // setBoards((prev) => {
+    //   return prev.concat(newBoard);
+    // });
+    const fetchApi = await fetch("http://localhost:5000/api/board", {
+      method: "PUT",
+      body: JSON.stringify({
+        ...newBoard,
+      }),
     });
+    fetchApi
+      .then((res) => {
+        return res.json();
+      })
+      .then((data) => console.log(data));
 
     event.preventDefault();
   };
@@ -111,7 +122,7 @@ function CarpoolPost() {
       <NavBar />
       <ContentWrapper>
         <InputInfo title="제목" rows={1} handleChange={(e) => onChangeValue(e, "title")} defaultValue={boardData.title}/>
-          <StyledLabel>출발지:</StyledLabel>
+          {/* <StyledLabel>출발지:</StyledLabel>
           <select name="districts">
             <option value={boardData.startProvince} selected>
               {boardData.startProvince}
@@ -160,8 +171,17 @@ function CarpoolPost() {
                 }
               }
             })}
-          </select>
-          <DetailAddress onChange={(e) => onChangeValue(e, "arrivals")} defaultValue={boardData.arrivalDetail} />
+          </select> */}
+          <StyledLabel>출발지</StyledLabel>
+        <BoxWrapper>
+          <SelectBox type="departure" label="출발지" />
+          <DetailAddress onChange={(e) => onChangeValue(e, "departures")} placeholder="상세주소" />
+        </BoxWrapper>
+        <StyledLabel>목적지</StyledLabel>
+        <BoxWrapper>
+          <SelectBox type="arrivals" label="목적지" />
+          <DetailAddress onChange={(e) => onChangeValue(e, "arrivals")} placeholder="상세주소" />
+        </BoxWrapper>
         <StyledLabel>날짜 및 시간</StyledLabel>
         <Date onChange={(e) => onChangeValue(e, "departureTime")} type="datetime-local" />
         <TypeContainer>

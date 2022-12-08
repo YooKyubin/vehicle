@@ -11,6 +11,7 @@ function Carpool() {
   const [url, setUrl] = useState("http://localhost:3000/board");
   const { selectedOption, boards, setBoards } = useBoardData();
   const [currentBoards, setCurrentBoards] = useState(boards);
+  const [passengerList, setPassengerList] = useState([]);
 
   //Search 컴포넌트로 넘겨줄 콜백함수?
   const getURL = (loadUrl) => {
@@ -19,8 +20,9 @@ function Carpool() {
   const onClickSearch = () => {
     const filteredBoard = boards.filter(
       (boardInfo) =>
-        boardInfo.district === selectedOption.district && boardInfo.region === selectedOption.region
+        boardInfo.startProvince === selectedOption.district && boardInfo.startCity === selectedOption.region        
     );
+    console.log("검색",selectedOption.district, "시:", selectedOption.region);
     setCurrentBoards(filteredBoard);
   };
   const onClickLogo = () => {
@@ -28,6 +30,7 @@ function Carpool() {
   };
   useEffect(() => {
     fetch("http://localhost:5000/api/carpoolboard")
+    // fetch("http://localhost:3001/board")
       .then((res) => {
         return res.json();
       })
@@ -35,7 +38,20 @@ function Carpool() {
         setCurrentBoards(data);
         setBoards(data);
       });
-  }, [currentBoards, boards]);
+  // }, [currentBoards, boards]);
+
+    // 게시글 동승자 목록 받아오기
+    // fetch('http://localhost:3001/passenger')
+    fetch('http://localhost:5000/api/carpoolpassenger')
+    .then(res=>{
+        return res.json();
+    })
+    .then(data=>{
+        setPassengerList(data);
+        console.log("ghk",data.map(a=>a.userId));
+    })
+
+  }, []);
 
   //검색 주소를 콘솔에 출력
   // console.log(toSearch);
@@ -51,7 +67,11 @@ function Carpool() {
       </InnerNavBarWrapper>
       <BoardWrapper>
         {currentBoards.map((board) => (
-          <Thumbnail key={board.boardId} boardInfo={board} />
+          <Thumbnail key={board.id} boardInfo={board} 
+          passengerList={passengerList.filter(i =>{
+            return i.boardId === board.id;
+          })}
+          />
         ))}
       </BoardWrapper>
     </CarpoolWrapper>
